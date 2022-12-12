@@ -13,6 +13,7 @@ contract AnyChainDAO is Ownable {
     uint32 nonce = 0;
     mapping(uint16 => bytes32) _daoContracts;
     mapping(bytes32 => bool) _completedMessages;
+    uint32 siblingCount;
 
     // Create an enum named Vote containing possible options for a vote
     enum Vote {
@@ -142,6 +143,7 @@ contract AnyChainDAO is Ownable {
             proposals[proposalIndex].votes.inFavor += votes.inFavor;
             proposals[proposalIndex].votes.against += votes.against;
             proposals[proposalIndex].votes.abstain += votes.abstain;
+            proposals[proposalIndex].siblingVoteReceivedCount += 1;
         }
     }
 
@@ -202,6 +204,15 @@ contract AnyChainDAO is Ownable {
         } else {
             proposal.votes.abstain += 1;
         }
+    }
+
+    function endVoting(uint256 proposalIndex)
+        external
+        votingRightHolderOnly
+        //modified Needed here to
+    {
+        proposals[proposalIndex].votingEnded = true;
+        sendMessage(MessageOperation.VOTING_ENDED, proposalIndex);
     }
 
     /// @dev executeProposal allows any voting right holder to execute a proposal after it's deadline has been exceeded

@@ -48,8 +48,6 @@ contract AnyChainDAO is Ownable {
         VoteCount votes;
         // votingEnded - whether or not the voting period has ended and chains have been notified
         bool votingEnded;
-        // siblingVoteReceivedCount - number of chains from which final vote counts have been added
-        uint32 siblingVoteReceivedCount;
         // executed - whether or not this proposal has been executed yet. Cannot be executed before the deadline has been exceeded.
         bool executed;
         // proposalPassed - whether the voting outcome was in favor of the proposal or not
