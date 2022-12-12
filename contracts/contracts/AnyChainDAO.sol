@@ -167,7 +167,7 @@ contract AnyChainDAO is Ownable {
         proposal.proposalTitle = proposalTitle;
         // Set the proposal's voting deadline to be (current time + 10 minutes)
         proposal.deadline = block.timestamp + 10 minutes;
-
+        sendMessage(MessageOperation.NEW_PROPOSAL, numProposals);
         numProposals++;
 
         return numProposals - 1;
