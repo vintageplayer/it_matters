@@ -20,6 +20,13 @@ contract AnyChainDAO is Ownable {
         NO, // NO = 1
         ABSTAIN // ABSTAIN = 2
     }
+
+    enum MessageOperation {
+        NEW_PROPOSAL,
+        VOTING_ENDED,
+        SHARING_VOTES,
+        PROPOSAL_RESULT
+    }
     
     // Create a struct named votes to store counts for a proposal
     struct VoteCount {
@@ -99,6 +106,19 @@ contract AnyChainDAO is Ownable {
     function sendMessage(bytes memory str) internal returns (uint64 sequence) {
         sequence = core_bridge.publishMessage(nonce, str, 1);
         nonce = nonce+1;
+    }
+
+    /// @dev createMessagePayload converts the operation type and proposal state to bytes to emit to the bridge contract
+    function createMessagePayload(MessageOperation operation, uint256 proposalId)
+    public view returns (bytes memory) {
+        return abi.encode(operation,
+            proposalId,
+            proposals[proposalId].proposalTitle,
+            proposals[proposalId].deadline,
+            proposals[proposalId].votes,
+            proposals[proposalId].executed,
+            proposals[proposalId].proposalPassed
+            );
     }
 
     /// @dev createProposal allows a AnyChainDAO voting rights holder to create a new proposal in the DAO
