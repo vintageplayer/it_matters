@@ -121,9 +121,9 @@ contract AnyChainDAO is Ownable {
             );
     }
 
-    /// @dev decodeMessagePayload converts the bytes received to operation type and proposal state 
-    function decodeMessagePayload(bytes memory data)
-    pure internal returns (MessageOperation, uint256, string memory, uint256, VoteCount memory, bool, bool) {
+    /// @dev processMessagePayload processes messages received from other chain
+    function processMessagePayload(bytes memory data)
+    internal {
         MessageOperation operation;
         uint256 proposalId;
         string memory proposalTitle;
@@ -132,7 +132,26 @@ contract AnyChainDAO is Ownable {
         bool executed;
         bool proposalPassed;
         (operation, proposalId, proposalTitle, deadline, votes, executed, proposalPassed) = abi.decode(data, (MessageOperation, uint256, string, uint256, VoteCount, bool, bool));
-        return (operation, proposalId, proposalTitle, deadline, votes, executed, proposalPassed);
+    }
+
+
+    function receiveEncodedMsg(bytes memory encodedMsg) public {
+        (IWormhole.VM memory vm, bool valid, string memory reason) = core_bridge.parseAndVerifyVM(encodedMsg);
+        
+        //1. Check Wormhole Guardian Signatures
+        //  If the VM is NOT valid, will return the reason it's not valid
+        //  If the VM IS valid, reason will be blank
+        require(valid, reason);
+
+        //2. Check if the Emitter Chain contract is registered
+        require(_daoContracts[vm.emitterChainId] == vm.emitterAddress, "Invalid Emitter Address!");
+    
+        //3. Check that the message hasn't already been processed
+        require(!_completedMessages[vm.hash], "Message already processed");
+        _completedMessages[vm.hash] = true;
+
+        //Process the Message
+        processMessagePayload(vm.payload);
     }
 
     /// @dev createProposal allows a AnyChainDAO voting rights holder to create a new proposal in the DAO
