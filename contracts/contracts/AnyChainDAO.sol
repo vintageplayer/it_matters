@@ -103,7 +103,8 @@ contract AnyChainDAO is Ownable {
         _daoContracts[chainId] = daoContractAddress;
     }
 
-    function sendMessage(bytes memory str) internal returns (uint64 sequence) {
+    function sendMessage(MessageOperation operation, uint256 proposalId) internal returns (uint64 sequence) {
+        bytes memory str = createMessagePayload(operation, proposalId);
         sequence = core_bridge.publishMessage(nonce, str, 1);
         nonce = nonce+1;
     }
