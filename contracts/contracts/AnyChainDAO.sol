@@ -2,10 +2,17 @@
 pragma solidity ^0.8.17;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "./Wormhole/IWormhole.sol";
 
 // We will add the Interfaces here
 
 contract AnyChainDAO is Ownable {
+    
+    // Variables needed for cross-chain messaging using wormhole
+    IWormhole core_bridge;
+    uint32 nonce = 0;
+    mapping(uint16 => bytes32) _daoContracts;
+    mapping(bytes32 => bool) _completedMessages;
 
     // Create an enum named Vote containing possible options for a vote
     enum Vote {
@@ -48,7 +55,9 @@ contract AnyChainDAO is Ownable {
 
     // Create a payable constructor to store treasuryfunds and use it for executing proposals
     // The payable allows this constructor to accept an ETH deposit when it is being deployed
-    constructor() payable {}
+    constructor(address wormhole_core_bridge_address) payable {        
+        core_bridge = IWormhole(wormhole_core_bridge_address);
+    }
 
     // Create a modifier which only allows a function to be
     // called by someone who has voting power through tokens or delegation
