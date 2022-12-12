@@ -121,6 +121,19 @@ contract AnyChainDAO is Ownable {
             );
     }
 
+    /// @dev decodeMessagePayload converts the bytes received to operation type and proposal state 
+    function decodeMessagePayload(bytes memory data)
+    pure internal returns (MessageOperation, uint256, string memory, uint256, VoteCount memory, bool, bool) {
+        MessageOperation operation;
+        uint256 proposalId;
+        string memory proposalTitle;
+        uint256 deadline;
+        VoteCount memory votes;
+        bool executed;
+        bool proposalPassed;
+        (operation, proposalId, proposalTitle, deadline, votes, executed, proposalPassed) = abi.decode(data, (MessageOperation, uint256, string, uint256, VoteCount, bool, bool));
+        return (operation, proposalId, proposalTitle, deadline, votes, executed, proposalPassed);
+    }
 
     /// @dev createProposal allows a AnyChainDAO voting rights holder to create a new proposal in the DAO
     /// @param proposalTitle - The proposal to execute based on voting outcome
