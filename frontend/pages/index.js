@@ -288,8 +288,11 @@ export default function Home() {
               <p>Supporting Votes: {p.inFavorVotes}</p>
               <p>Against Votes: {p.againstVotes}</p>
               <p>Votes Abstained: {p.abstainVotes}</p>
+              <p>Proposal Status: {p.deadline.getTime() > Date.now() ? "Open" : (
+                p.inFavorVotes > p.againstVotes ? "Accepted" : "Rejected"
+              )}</p>
               <p>Executed?: {p.executed.toString()}</p>
-              {p.deadline.getTime() > Date.now() && !p.executed ? (
+              { p.deadline.getTime() > Date.now() && !p.executed ? (
                 <div className={styles.flex}>
                   <button
                     className={styles.button2}
