@@ -91,6 +91,12 @@ contract AnyChainDAO is Ownable {
         _;
     }
 
+    // Registers it's DAO contracts on other chains as the only ones that can send this instance messages
+    function registerDaoContracts(uint16 chainId, bytes32 daoContractAddress) public onlyOwner {
+        _daoContracts[chainId] = daoContractAddress;
+    }
+
+
     /// @dev createProposal allows a AnyChainDAO voting rights holder to create a new proposal in the DAO
     /// @param proposalTitle - The proposal to execute based on voting outcome
     /// @return Returns the proposal index for the newly created proposal
