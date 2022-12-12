@@ -46,6 +46,10 @@ contract AnyChainDAO is Ownable {
         uint256 deadline;
         // votes - Count of different votes cast on-chain for the proposal
         VoteCount votes;
+        // votingEnded - whether or not the voting period has ended and chains have been notified
+        bool votingEnded;
+        // siblingVoteReceivedCount - number of chains from which final vote counts have been added
+        uint32 siblingVoteReceivedCount;
         // executed - whether or not this proposal has been executed yet. Cannot be executed before the deadline has been exceeded.
         bool executed;
         // proposalPassed - whether the voting outcome was in favor of the proposal or not
@@ -103,22 +107,22 @@ contract AnyChainDAO is Ownable {
         _daoContracts[chainId] = daoContractAddress;
     }
 
-    function sendMessage(MessageOperation operation, uint256 proposalId) internal returns (uint64 sequence) {
-        bytes memory str = createMessagePayload(operation, proposalId);
+    function sendMessage(MessageOperation operation, uint256 proposalIndex) internal returns (uint64 sequence) {
+        bytes memory str = createMessagePayload(operation, proposalIndex);
         sequence = core_bridge.publishMessage(nonce, str, 1);
         nonce = nonce+1;
     }
 
     /// @dev createMessagePayload converts the operation type and proposal state to bytes to emit to the bridge contract
-    function createMessagePayload(MessageOperation operation, uint256 proposalId)
+    function createMessagePayload(MessageOperation operation, uint256 proposalIndex)
     internal view returns (bytes memory) {
         return abi.encode(operation,
-            proposalId,
-            proposals[proposalId].proposalTitle,
-            proposals[proposalId].deadline,
-            proposals[proposalId].votes,
-            proposals[proposalId].executed,
-            proposals[proposalId].proposalPassed
+            proposalIndex,
+            proposals[proposalIndex].proposalTitle,
+            proposals[proposalIndex].deadline,
+            proposals[proposalIndex].votes,
+            proposals[proposalIndex].executed,
+            proposals[proposalIndex].proposalPassed
             );
     }
 
@@ -126,13 +130,13 @@ contract AnyChainDAO is Ownable {
     function processMessagePayload(bytes memory data)
     internal {
         MessageOperation operation;
-        uint256 proposalId;
+        uint256 proposalIndex;
         string memory proposalTitle;
         uint256 deadline;
         VoteCount memory votes;
         bool executed;
         bool proposalPassed;
-        (operation, proposalId, proposalTitle, deadline, votes, executed, proposalPassed) = abi.decode(data, (MessageOperation, uint256, string, uint256, VoteCount, bool, bool));
+        (operation, proposalIndex, proposalTitle, deadline, votes, executed, proposalPassed) = abi.decode(data, (MessageOperation, uint256, string, uint256, VoteCount, bool, bool));
     }
 
 
@@ -209,6 +213,7 @@ contract AnyChainDAO is Ownable {
             proposal.proposalPassed = true;
         }
         proposal.executed = true;
+        sendMessage(MessageOperation.PROPOSAL_RESULT, proposalIndex);
     }
 
     /// @dev withdrawEther allows the contract owner (deployer) to withdraw the ETH from the contract
