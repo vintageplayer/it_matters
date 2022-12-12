@@ -61,12 +61,8 @@ contract AnyChainDAO is Ownable {
     // Create a mapping of ID to Proposal
     mapping(uint256 => Proposal) public proposals;
 
-    // Number of proposals that have been created
-    uint256 public numProposals;
-
-    // Create a payable constructor to store treasuryfunds and use it for executing proposals
-    // The payable allows this constructor to accept an ETH deposit when it is being deployed
-    constructor(address wormhole_core_bridge_address) payable {        
+    // Initialize wormhole based on the bridge_address shared
+    constructor(address wormhole_core_bridge_address) {
         core_bridge = IWormhole(wormhole_core_bridge_address);
     }
 
@@ -83,21 +79,6 @@ contract AnyChainDAO is Ownable {
         require(
             proposals[proposalIndex].deadline > block.timestamp,
             "DEADLINE_EXCEEDED"
-        );
-        _;
-    }
-
-    // Create a modifier which only allows a function to be
-    // called if the given proposals' deadline HAS been exceeded
-    // and if the proposal has not yet been executed
-    modifier readyToExecuteOnly(uint256 proposalIndex) {
-        require(
-            proposals[proposalIndex].deadline <= block.timestamp,
-            "DEADLINE_NOT_EXCEEDED"
-        );
-        require(
-            proposals[proposalIndex].executed == false,
-            "PROPOSAL_ALREADY_EXECUTED"
         );
         _;
     }
@@ -121,6 +102,7 @@ contract AnyChainDAO is Ownable {
             proposals[proposalIndex].proposalTitle,
             proposals[proposalIndex].deadline,
             proposals[proposalIndex].votes,
+            proposals[proposalIndex].votingEnded,
             proposals[proposalIndex].executed,
             proposals[proposalIndex].proposalPassed
             );
@@ -138,10 +120,15 @@ contract AnyChainDAO is Ownable {
         bool proposalPassed;
         (operation, proposalIndex, proposalTitle, deadline, votes, executed, proposalPassed) = abi.decode(data, (MessageOperation, uint256, string, uint256, VoteCount, bool, bool));
 
-        if (operation == MessageOperation.SHARING_VOTES) {
-            proposals[proposalIndex].votes.inFavor += votes.inFavor;
-            proposals[proposalIndex].votes.against += votes.against;
-            proposals[proposalIndex].votes.abstain += votes.abstain;
+        if (operation == MessageOperation.NEW_PROPOSAL) {
+            proposals[proposalIndex].proposalTitle = proposalTitle;
+            proposals[proposalIndex].deadline = deadline;
+        } else if (operation == MessageOperation.VOTING_ENDED) {
+            proposals[proposalIndex].votingEnded = true;
+            sendMessage(MessageOperation.SHARING_VOTES, proposalIndex);
+        } else if (operation == MessageOperation.PROPOSAL_RESULT) {
+            proposals[proposalIndex].executed = executed;
+            proposals[proposalIndex].proposalPassed = proposalPassed;
         }
     }
 
@@ -165,24 +152,6 @@ contract AnyChainDAO is Ownable {
         processMessagePayload(vm.payload);
     }
 
-    /// @dev createProposal allows a AnyChainDAO voting rights holder to create a new proposal in the DAO
-    /// @param proposalTitle - The proposal to execute based on voting outcome
-    /// @return Returns the proposal index for the newly created proposal
-    function createProposal(string calldata proposalTitle)
-        external
-        votingRightHolderOnly
-        returns (uint256)
-    {
-        Proposal storage proposal = proposals[numProposals];
-        proposal.proposalTitle = proposalTitle;
-        // Set the proposal's voting deadline to be (current time + 10 minutes)
-        proposal.deadline = block.timestamp + 10 minutes;
-        sendMessage(MessageOperation.NEW_PROPOSAL, numProposals);
-        numProposals++;
-
-        return numProposals - 1;
-    }
-
     /// @dev voteOnProposal allows a voting right holder to cast their vote on an active proposal
     /// @param proposalIndex - the index of the proposal to vote on in the proposals array
     /// @param vote - the type of vote they want to cast
@@ -203,33 +172,4 @@ contract AnyChainDAO is Ownable {
             proposal.votes.abstain += 1;
         }
     }
-
-    /// @dev executeProposal allows any voting right holder to execute a proposal after it's deadline has been exceeded
-    /// @param proposalIndex - the index of the proposal to execute in the proposals array
-    function executeProposal(uint256 proposalIndex)
-        external
-        votingRightHolderOnly
-        readyToExecuteOnly(proposalIndex)
-    {
-        Proposal storage proposal = proposals[proposalIndex];
-
-        // If the proposal has more YES votes than NO votes
-        // mark the outcome has success
-        if (proposal.votes.inFavor > proposal.votes.against) {
-            proposal.proposalPassed = true;
-        }
-        proposal.executed = true;
-        sendMessage(MessageOperation.PROPOSAL_RESULT, proposalIndex);
-    }
-
-    /// @dev withdrawEther allows the contract owner (deployer) to withdraw the ETH from the contract
-    function withdrawEther() external onlyOwner {
-        payable(owner()).transfer(address(this).balance);
-    }
-
-    // The following two functions allow the contract to accept ETH deposits
-    // directly from a wallet without calling a function
-    receive() external payable {}
-
-    fallback() external payable {}
 }
