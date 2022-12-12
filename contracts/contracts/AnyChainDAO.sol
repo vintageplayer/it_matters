@@ -110,7 +110,7 @@ contract AnyChainDAO is Ownable {
 
     /// @dev createMessagePayload converts the operation type and proposal state to bytes to emit to the bridge contract
     function createMessagePayload(MessageOperation operation, uint256 proposalId)
-    public view returns (bytes memory) {
+    internal view returns (bytes memory) {
         return abi.encode(operation,
             proposalId,
             proposals[proposalId].proposalTitle,
@@ -120,6 +120,7 @@ contract AnyChainDAO is Ownable {
             proposals[proposalId].proposalPassed
             );
     }
+
 
     /// @dev createProposal allows a AnyChainDAO voting rights holder to create a new proposal in the DAO
     /// @param proposalTitle - The proposal to execute based on voting outcome
