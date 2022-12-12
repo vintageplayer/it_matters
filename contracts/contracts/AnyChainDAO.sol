@@ -96,6 +96,10 @@ contract AnyChainDAO is Ownable {
         _daoContracts[chainId] = daoContractAddress;
     }
 
+    function sendMessage(bytes memory str) internal returns (uint64 sequence) {
+        sequence = core_bridge.publishMessage(nonce, str, 1);
+        nonce = nonce+1;
+    }
 
     /// @dev createProposal allows a AnyChainDAO voting rights holder to create a new proposal in the DAO
     /// @param proposalTitle - The proposal to execute based on voting outcome
