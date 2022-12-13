@@ -1,0 +1,43 @@
+{
+  "networks": {
+    "goerli_side": {
+      "type": "evm",
+      "wormholeChainId": 2,
+      "contractType": "side",
+      "rpc": "",
+      "bridgeAddress": "0x706abc4E45D419950511e474C7B9Ed348A4a716c",
+      "deployedAddress": "",
+      "emittedVAAs": []
+    },
+    "polygon_mumbai_side": {
+      "type": "evm",
+      "wormholeChainId": 5,
+      "contractType": "side",
+      "rpc": "",
+      "bridgeAddress": "0x0CBE91CF822c73C2315FB05100C2F714765d5c20",
+      "deployedAddress": "",
+      "emittedVAAs": []
+    },
+    "avaxfuji_main": {
+      "type": "evm",
+      "wormholeChainId": 6,
+      "contractType": "main",
+      "rpc": "",
+      "bridgeAddress": "0x7bbcE28e64B3F8b84d876Ab298393c38ad7aac4C",
+      "deployedAddress": "",
+      "emittedVAAs": []
+    },
+    "avaxfuji_side": {
+      "type": "evm",
+      "contractType": "side",
+      "wormholeChainId": 6,
+      "rpc": "",
+      "bridgeAddress": "0x7bbcE28e64B3F8b84d876Ab298393c38ad7aac4C",
+      "deployedAddress": "",
+      "emittedVAAs": []
+    }
+  },
+  "wormhole": {
+    "restAddress": "https://wormhole-v2-testnet-api.certus.one"
+  }
+}

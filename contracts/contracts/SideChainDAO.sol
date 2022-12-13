@@ -130,7 +130,6 @@ contract SideChainDAO is Ownable {
         }
     }
 
-
     function receiveEncodedMsg(bytes memory encodedMsg) public {
         (IWormhole.VM memory vm, bool valid, string memory reason) = core_bridge.parseAndVerifyVM(encodedMsg);
         

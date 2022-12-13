@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "sh test/avax_main_n_side.sh"
   },
   "keywords": [],
   "author": "",
@@ -27,6 +27,7 @@
     "typechain": "^8.1.1"
   },
   "dependencies": {
+    "@certusone/wormhole-sdk": "^0.9.5",
     "@openzeppelin/contracts": "^4.8.0",
     "dotenv": "^16.0.3"
   }
