@@ -35,6 +35,15 @@
       "bridgeAddress": "0x7bbcE28e64B3F8b84d876Ab298393c38ad7aac4C",
       "deployedAddress": "",
       "emittedVAAs": []
+    },
+    "moonalpha_main": {
+        "type": "evm",
+        "contractType": "main",
+        "wormholeChainId": 16,
+        "rpc": "https://moonbase-alpha.public.blastapi.io",
+        "bridgeAddress": "0xa5B7D85a8f27dd7907dc8FdC21FA5657D5E2F901",
+        "deployedAddress": "0xa4b8805fAbD93AE0286c304ED5309C30c538F61d",
+        "emittedVAAs": []
     }
   },
   "wormhole": {

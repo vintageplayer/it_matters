@@ -56,8 +56,10 @@ async function createProposal(network, proposalTitle) {
 }
 
 async function getVaaBytes(wormhole_address, chainId, emitterAddress, seq) {
+    const vaaUrl = `${wormhole_address}/v1/signed_vaa/${chainId}/${emitterAddress}/${seq}`;
+    console.log(vaaUrl);
     const vaaBytes = await (
-        await fetch(`${wormhole_address}/v1/signed_vaa/${chainId}/${emitterAddress}/${seq}`)
+        await fetch(vaaUrl)
     ).json();
     return vaaBytes;
 }
@@ -149,6 +151,7 @@ async function main() {
         const proposalTitle = process.argv[4];
         const seq = await createProposal(network, proposalTitle);
         const emitterAddress = getEmitterAddressEth(network.deployedAddress);
+        await new Promise((r) => setTimeout(r, 12000));
         const vaaBytes = await getVaaBytes(config.wormhole.restAddress, network.wormholeChainId, emitterAddress, seq);
 
         if (!network.emittedVAAs) {
@@ -197,6 +200,7 @@ async function main() {
         const proposalIndex = process.argv[4];
         const seq = await endVotingPeriod(network, proposalIndex);
         const emitterAddress = getEmitterAddressEth(network.deployedAddress);
+        await new Promise((r) => setTimeout(r, 12000));
         const vaaBytes = await getVaaBytes(config.wormhole.restAddress, network.wormholeChainId, emitterAddress, seq);
 
         if (!network.emittedVAAs) {
@@ -224,7 +228,7 @@ async function main() {
 
         const tx = await(await submitMessage(network, vaaBytes)).wait();
         console.log(`Submitted VAA: ${vaaBytes}\nTX: ${tx.hash}`);
-        await new Promise((r) => setTimeout(r, 5000));
+        await new Promise((r) => setTimeout(r, 12000));
         console.log(network.bridgeAddress);
         const seq = parseSequenceFromLogEth(tx, network.bridgeAddress);
 
@@ -258,6 +262,7 @@ async function main() {
         const proposalIndex = process.argv[4];
         const seq = await executeProposal(network, proposalIndex);
         const emitterAddress = getEmitterAddressEth(network.deployedAddress);
+        await new Promise((r) => setTimeout(r, 12000));
         const vaaBytes = await getVaaBytes(config.wormhole.restAddress, network.wormholeChainId, emitterAddress, seq);
 
         if (!network.emittedVAAs) {
