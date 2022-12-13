@@ -90,11 +90,30 @@ contract AnyChainDAO is Ownable {
 
     // Create a modifier which only allows a function to be
     // called if the given proposals' deadline HAS been exceeded
-    // and if the proposal has not yet been executed
-    modifier readyToExecuteOnly(uint256 proposalIndex) {
+    // and the voting reconcialitation is yet to start
+    modifier readyForVotingResult(uint256 proposalIndex) {
         require(
             proposals[proposalIndex].deadline <= block.timestamp,
             "DEADLINE_NOT_EXCEEDED"
+        );
+        require(
+            proposals[proposalIndex].votingEnded == false,
+            "PROPOSAL_VOTE_COUNT_ALREADY_STARTED"
+        );
+        _;
+    }
+
+    // Create a modifier which only allows a function to be
+    // called if the given proposals' voting results are available
+    // and if the proposal has not yet been executed
+    modifier readyToExecuteOnly(uint256 proposalIndex) {
+        require(
+            proposals[proposalIndex].votingEnded = true,
+            "VOTING_AGGREGATION_IS_YET_START"
+        );
+        require(
+            proposals[proposalIndex].siblingVoteReceivedCount == siblingCount,
+            "YET_TO_RECEIVE_RESULTS_FROM_ALL_CHAINS"
         );
         require(
             proposals[proposalIndex].executed == false,
@@ -106,6 +125,7 @@ contract AnyChainDAO is Ownable {
     // Registers it's DAO contracts on other chains as the only ones that can send this instance messages
     function registerDaoContracts(uint16 chainId, bytes32 daoContractAddress) public onlyOwner {
         _daoContracts[chainId] = daoContractAddress;
+        siblingCount += 1;
     }
 
     function sendMessage(MessageOperation operation, uint256 proposalIndex) internal returns (uint64 sequence) {

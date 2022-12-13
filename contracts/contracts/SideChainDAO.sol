@@ -6,7 +6,7 @@ import "./Wormhole/IWormhole.sol";
 
 // We will add the Interfaces here
 
-contract AnyChainDAO is Ownable {
+contract SideChainDAO is Ownable {
     
     // Variables needed for cross-chain messaging using wormhole
     IWormhole core_bridge;
