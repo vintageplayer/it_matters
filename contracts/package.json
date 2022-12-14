@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test_moon": "sh test/moon_main_n_avax_side.sh",
+    "test_moon": "sh test/avax_main_n_moon_side.sh",
     "test_avax": "sh test/avax_main_n_side.sh"
   },
   "keywords": [],

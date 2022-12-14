@@ -36,7 +36,7 @@
       "deployedAddress": "",
       "emittedVAAs": []
     },
-    "moonalpha_side": {
+    "moonalpha_main": {
         "type": "evm",
         "contractType": "main",
         "wormholeChainId": 16,

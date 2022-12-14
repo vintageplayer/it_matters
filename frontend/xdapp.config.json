@@ -1,0 +1,25 @@
+{
+  "networks": {
+    "main": {
+      "type": "evm",
+      "wormholeChainId": 6,
+      "contractType": "main",
+      "rpc": "https://avalanche-fuji.infura.io/v3/55e345fddd884ee7a36ae702643986d0",
+      "bridgeAddress": "0x7bbcE28e64B3F8b84d876Ab298393c38ad7aac4C",
+      "deployedAddress": "0xf1756B65C076b52D935B4da1bb2525693a2d31A5",
+      "emittedVAAs": []
+    },
+    "side": {
+      "type": "evm",
+      "contractType": "side",
+      "wormholeChainId": 16,
+      "rpc": "https://moonbase-alpha.public.blastapi.io",
+      "bridgeAddress": "0xa5B7D85a8f27dd7907dc8FdC21FA5657D5E2F901",
+      "deployedAddress": "0xd4d3C026ec0E7e34A2f36b81cF4b92E875A37dE4",
+      "emittedVAAs": []
+    }
+  },
+  "wormhole": {
+    "restAddress": "https://wormhole-v2-testnet-api.certus.one"
+  }
+}

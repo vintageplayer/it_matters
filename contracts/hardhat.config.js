@@ -26,7 +26,7 @@ module.exports = {
       url: AVAXFUJI_RPC_URL,
       accounts: [WALLET_PRIVATE_KEY],
     },
-    moonalpha_main: {
+    moonalpha_side: {
       url: MOONBASE_ALPHA_RPC_URL,
       accounts: [WALLET_PRIVATE_KEY],
     },
