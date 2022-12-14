@@ -167,7 +167,7 @@ export default function Main() {
 		  const signer = await getProviderOrSigner(true);
 		  const daoContract = getDaoContractInstance(signer);
 
-		  let vote = _vote === "YAY" ? 0 : 1;
+		  let vote = _vote === "YES" ? 0 : (_vote === "NO" ? 1 : 2);
 		  const txn = await daoContract.voteOnProposal(proposalId, vote);
 		  setLoading(true);
 		  try {
