@@ -22,6 +22,9 @@ There are many small areas to make it usage even for understanding, for eg:
 - The relayer api is created to only load one side chain currently, though it can be easily modified to have any number of side votign chains
 - As this a POC, voting power in each chain is set to 1 for a user. So the same address can cast vote per chain. In the limited time-frame, intension was to show the concept of cross-chain voting. The actual voting weightage can be integrated similar to Compound and OpenZepplin contracts.
 
+## Deployed contracts
+Avalanche Fuji Chain (ID: 43113): 0xf1756B65C076b52D935B4da1bb2525693a2d31A5
+Moonbase Alpha Chain (ID: 1278): 0xd4d3C026ec0E7e34A2f36b81cF4b92E875A37dE4
 
 ## Setup
 
